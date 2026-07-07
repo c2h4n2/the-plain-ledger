@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savings Goal Calculator — The Plain Ledger</title>
+<meta name="description" content="Free savings goal calculator. Enter your target amount, timeline, and current savings to see exactly what to set aside each month.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">$</span>
+      <span class="brand-name">The Plain Ledger</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">MENU</button>
+    <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../articles/index.html">Guides</a>
+      <a href="index.html" class="current">Calculators</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<header class="article-header">
+  <div class="wrap">
+    <div class="article-meta">CALCULATOR · SAVINGS</div>
+    <h1>Savings Goal Calculator</h1>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 40px 0 60px;">
+  <div class="calc-wrap">
+    <div class="ledger-card">
+      <div class="ledger-title"><span>YOUR GOAL</span><span>&nbsp;</span></div>
+
+      <div class="field">
+        <label for="goal">Savings goal</label>
+        <input type="number" id="goal" value="5000" min="0" step="1">
+      </div>
+
+      <div class="field">
+        <label for="current">Amount already saved</label>
+        <input type="number" id="current" value="500" min="0" step="1">
+      </div>
+
+      <div class="field">
+        <label for="months">Timeline (months)</label>
+        <input type="number" id="months" value="12" min="1" step="1">
+      </div>
+
+      <div class="field">
+        <label for="rate">Estimated annual interest rate on savings (%)</label>
+        <input type="number" id="rate" value="4" min="0" step="0.1">
+        <div class="hint">Optional — leave at 0 if you'd rather ignore interest and see the simple number.</div>
+      </div>
+    </div>
+
+    <div class="ledger-card">
+      <div class="ledger-title"><span>RESULT</span><span>&nbsp;</span></div>
+      <div class="result-label">Set aside per month</div>
+      <div class="result-big" id="resultMonthly">$375.00</div>
+
+      <div class="ledger-row" style="margin-top:18px;"><span class="label">Amount still needed</span><span class="leader"></span><span class="value" id="resultRemaining">$4,500.00</span></div>
+      <div class="ledger-row"><span class="label">Timeline</span><span class="leader"></span><span class="value" id="resultMonths">12 months</span></div>
+      <div class="ledger-row total"><span class="label">Goal</span><span class="leader"></span><span class="value" id="resultGoal">$5,000.00</span></div>
+    </div>
+  </div>
+
+  <div class="ad-slot" style="max-width:1080px;">Ad placement — insert AdSense unit here once approved</div>
+</section>
+
+<script src="../assets/main.js"></script>
+<script>
+function calcSavings() {
+  var goal = parseFloat(document.getElementById('goal').value) || 0;
+  var current = parseFloat(document.getElementById('current').value) || 0;
+  var months = parseInt(document.getElementById('months').value) || 1;
+  var annualRate = parseFloat(document.getElementById('rate').value) || 0;
+
+  var remaining = Math.max(goal - current, 0);
+  var monthlyContribution;
+
+  if (annualRate > 0) {
+    var r = (annualRate / 100) / 12;
+    // Future value of a series formula solved for payment
+    var factor = (Math.pow(1 + r, months) - 1) / r;
+    monthlyContribution = remaining / factor;
+  } else {
+    monthlyContribution = remaining / months;
+  }
+
+  document.getElementById('resultMonthly').textContent = formatMoney(monthlyContribution);
+  document.getElementById('resultRemaining').textContent = formatMoney(remaining);
+  document.getElementById('resultMonths').textContent = months + (months === 1 ? ' month' : ' months');
+  document.getElementById('resultGoal').textContent = formatMoney(goal);
+}
+
+['goal','current','months','rate'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', calcSavings);
+});
+
+document.addEventListener('DOMContentLoaded', calcSavings);
+</script>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <div class="brand-name" style="margin-bottom:8px;">The Plain Ledger</div>
+      <div style="opacity:0.75; max-width:38ch;">Plain-English money guidance and free calculators. Educational content only — not financial advice.</div>
+    </div>
+    <div class="footer-links">
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+      <a href="../privacy-policy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-fine">© 2026 The Plain Ledger. All figures are illustrative.</div>
+  </div>
+</footer>
+
+</body>
+</html>
